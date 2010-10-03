@@ -25,14 +25,16 @@ public class Ship {
 	private Orientation orientation;
 	private BitmapDrawable bitmap_horizontal;
 	private BitmapDrawable bitmap_vertical;
+	private BattleshipGridView grid;
 	private float cellSize;
 	private Paint paint;
 	private Context context;
 
-	public Ship(Context context, ShipType type, float cellSize) {
+	public Ship(Context context, BattleshipGridView grid, ShipType type) {
 		this.context = context;
 		this.type = type;
-		this.cellSize = cellSize;
+		this.grid = grid;
+		this.cellSize = grid.getCellSize();
 		this.paint = new Paint();
 		switch (type) {
 			case CARRIER: size = 5; break;
@@ -57,6 +59,11 @@ public class Ship {
 	public boolean containsPoint(int x, int y) {
 		return (x > this.x && x < this.x + getWidth() &&
 			y > this.y && y < this.y + getHeight());
+	}
+
+	public void snapToGrid() {
+		this.x = (int)(((x / (int)cellSize) * cellSize) + grid.getOuterPadding());
+		this.y = (int)(((y / (int)cellSize) * cellSize) + grid.getOuterPadding());
 	}
 
 	public int getX() { return this.x; }

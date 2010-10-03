@@ -18,8 +18,8 @@ public class BattleshipGridView extends View {
 	public static final int SHIP_START_Y = 330;
 	public static final int CRUISER_START_X = 30;
 
+	private static final int OUTER_PADDING = 5;
 	private float cellSize;
-	private final int OUTER_PADDING = 5;
 	private Paint paint;
 	private Rect border;
 	private final Context context;
@@ -32,7 +32,6 @@ public class BattleshipGridView extends View {
 	public boolean onTouchEvent(MotionEvent event) {
 		switch(event.getAction()) {
 		case MotionEvent.ACTION_DOWN:
-			Log.d(TAG, "touch event down");
 			for (int i = 0; i < ships.length; i++) {
 				if (ships[i].containsPoint((int)event.getX(), (int)event.getY())) {
 					draggingShip = ships[i];
@@ -41,7 +40,6 @@ public class BattleshipGridView extends View {
 			}
 			break;
 		case MotionEvent.ACTION_MOVE:
-			Log.d(TAG, "touch event move");
 			if (draggingShip != null) {
 				draggingShip.setX((int)(event.getX() - draggingShip.getWidth() / 2));
 				draggingShip.setY((int)(event.getY() - draggingShip.getHeight() / 2));
@@ -49,8 +47,9 @@ public class BattleshipGridView extends View {
 			invalidate();
 			break;
 		case MotionEvent.ACTION_UP:
-			Log.d(TAG, "touch event up");
+			draggingShip.snapToGrid();
 			draggingShip = null;
+			invalidate();
 			break;
 		}
 		return true;
@@ -81,7 +80,7 @@ public class BattleshipGridView extends View {
 	}
 
 	private void resetShips() {
-		cruiser = new Ship(context, Ship.ShipType.CRUISER, cellSize);
+		cruiser = new Ship(context, this, Ship.ShipType.CRUISER);
 		ships[0] = cruiser;
 	}
 
@@ -94,5 +93,13 @@ public class BattleshipGridView extends View {
 			canvas.drawLine(OUTER_PADDING, OUTER_PADDING + cellSize * row,
 					OUTER_PADDING + border.height(), OUTER_PADDING + cellSize * row, paint);
 		}
+	}
+
+	public float getCellSize() {
+		return cellSize;
+	}
+
+	public float getOuterPadding() {
+		return OUTER_PADDING;
 	}
 }
