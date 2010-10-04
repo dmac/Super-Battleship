@@ -14,18 +14,26 @@ import android.view.View;
 public class BattleshipGridView extends View {
 
 	private final String TAG = "Battleship";
+	public  static final int OUTER_PADDING = 5;
 
-	public static final int SHIP_START_Y = 330;
-	public static final int CRUISER_START_X = 30;
+	public static int SHIP_START_Y;
+	public static int CARRIER_START_X;
+	public static int BATTLESHIP_START_X;
+	public static int CRUISER_START_X;
+	public static int SUBMARINE_START_X;
+	public static int DESTROYER_START_X;
 
-	private static final int OUTER_PADDING = 5;
 	private float cellSize;
 	private Paint paint;
 	private Rect border;
 	private final Context context;
 
-	private Ship ships[] = new Ship[1];
+	private Ship ships[] = new Ship[5];
+	private Ship carrier;
+	private Ship battleship;
 	private Ship cruiser;
+	private Ship submarine;
+	private Ship destroyer;
 	private Ship draggingShip = null;
 
 	@Override
@@ -47,9 +55,11 @@ public class BattleshipGridView extends View {
 			invalidate();
 			break;
 		case MotionEvent.ACTION_UP:
-			draggingShip.snapToGrid();
-			draggingShip = null;
-			invalidate();
+			if (draggingShip != null) {
+				draggingShip.snapToGrid();
+				draggingShip = null;
+				invalidate();
+			}
 			break;
 		}
 		return true;
@@ -67,6 +77,7 @@ public class BattleshipGridView extends View {
 	protected void onSizeChanged(int w, int h, int oldw, int oldh) {
 		this.border = new Rect(OUTER_PADDING, OUTER_PADDING, w - OUTER_PADDING, w - OUTER_PADDING);
 		this.cellSize = (float) (border.width() / 10.0);
+		calculateInitialShipPlacements();
 		resetShips();
 		super.onSizeChanged(w, h, oldw, oldh);
 	};
@@ -76,12 +87,22 @@ public class BattleshipGridView extends View {
 		super.onDraw(canvas);
 		canvas.drawRect(border, paint);
 		drawGridLines(canvas);
-		cruiser.draw(canvas);
+		for (Ship ship : ships) {
+			ship.draw(canvas);
+		}
 	}
 
 	private void resetShips() {
+		carrier = new Ship(context, this, Ship.ShipType.CARRIER);
+		battleship = new Ship(context, this, Ship.ShipType.BATTLESHIP);
 		cruiser = new Ship(context, this, Ship.ShipType.CRUISER);
-		ships[0] = cruiser;
+		submarine = new Ship(context, this, Ship.ShipType.SUBMARINE);
+		destroyer = new Ship(context, this, Ship.ShipType.DESTROYER);
+		ships[0] = carrier;
+		ships[1] = battleship;
+		ships[2] = cruiser;
+		ships[3] = submarine;
+		ships[4] = destroyer;
 	}
 
 	private void drawGridLines(Canvas canvas) {
@@ -95,11 +116,16 @@ public class BattleshipGridView extends View {
 		}
 	}
 
-	public float getCellSize() {
-		return cellSize;
+	private void calculateInitialShipPlacements() {
+		SHIP_START_Y = (int) (OUTER_PADDING * 2 + cellSize * 10);
+		CARRIER_START_X = (OUTER_PADDING);
+		BATTLESHIP_START_X = (int) (OUTER_PADDING + 2 * cellSize);
+		CRUISER_START_X = (int) (OUTER_PADDING + cellSize * 4);
+		SUBMARINE_START_X = (int) (OUTER_PADDING + cellSize * 6);
+		DESTROYER_START_X = (int) (OUTER_PADDING + cellSize * 8);
 	}
 
-	public float getOuterPadding() {
-		return OUTER_PADDING;
+	public float getCellSize() {
+		return cellSize;
 	}
 }

@@ -37,13 +37,27 @@ public class Ship {
 		this.cellSize = grid.getCellSize();
 		this.paint = new Paint();
 		switch (type) {
-			case CARRIER: size = 5; break;
-			case BATTLESHIP: size = 4; break;
-			case CRUISER: size = 3; break;
-			case SUBMARINE: size = 3; break;
-			case DESTROYER: size = 2; break;
+			case CARRIER:
+				size = 5;
+				x = BattleshipGridView.CARRIER_START_X;
+				break;
+			case BATTLESHIP:
+				size = 4;
+				x = BattleshipGridView.BATTLESHIP_START_X;
+				break;
+			case CRUISER:
+				size = 3;
+				x = BattleshipGridView.CRUISER_START_X;
+				break;
+			case SUBMARINE:
+				size = 3;
+				x = BattleshipGridView.SUBMARINE_START_X;
+				break;
+			case DESTROYER:
+				size = 2;
+				x = BattleshipGridView.DESTROYER_START_X;
+				break;
 		}
-		this.x = BattleshipGridView.CRUISER_START_X;
 		this.y = BattleshipGridView.SHIP_START_Y;
 		this.orientation = Orientation.VERTICAL;
 		this.bitmap_horizontal = getBitmapForShip(type);
@@ -62,8 +76,8 @@ public class Ship {
 	}
 
 	public void snapToGrid() {
-		this.x = (int)(((x / (int)cellSize) * cellSize) + grid.getOuterPadding());
-		this.y = (int)(((y / (int)cellSize) * cellSize) + grid.getOuterPadding());
+		this.x = (int)(((x / (int)cellSize) * cellSize) + grid.OUTER_PADDING);
+		this.y = (int)(((y / (int)cellSize) * cellSize) + grid.OUTER_PADDING);
 	}
 
 	public int getX() { return this.x; }
